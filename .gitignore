@@ -1,0 +1,17 @@
+*.pyc
+dev.db
+local_settings.py
+media/ugc
+media/
+media2/
+externals
+build/
+src/
+pip-log.txt
+media/js/*.r*.js
+media/css/*.r*.css
+*DS_Store
+*.egg-info
+externals
+MANIFEST
+dist/
