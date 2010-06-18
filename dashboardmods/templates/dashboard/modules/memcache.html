@@ -1,0 +1,49 @@
+{% extends "dashboard/module.html" %}
+{% block module_content %}
+<style type="text/css" media="screen">
+	.chartlist li { 
+		position: relative;
+		display: block; 
+		background-color: #80D58B !important;
+		margin: .3em;
+		height: 1.1em;
+	}
+	.chartlist .count { 
+		display: block; 
+		position: absolute; 
+		top: 0; 
+		right: 0; 
+		margin: 0 0.3em; 
+		text-align: right; 
+		color: #444; 
+		font-weight: bold; 
+		font-size: 0.875em; 
+	}
+	.chartlist .label { 
+		display: block; 
+		position: absolute;
+		padding-left: 1em; 
+		top: 0;
+		left: 0;
+		z-index: 2; 
+	}
+	.chartlist .index { 
+		display: block; 
+		position: absolute; 
+		top: 0; 
+		left: 0; 
+		height: 100%; 
+		background: #F55D5B; 
+		text-indent: -9999px; 
+		overflow: hidden; 
+	}
+</style>
+
+<ul class="memcache">
+    {% spaceless %}
+    {% for child in module.children %}
+	{{child|safe}}
+    {% endfor %}
+    {% endspaceless %}
+</ul>
+{% endblock %}

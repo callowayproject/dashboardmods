@@ -1,0 +1,4 @@
+django-admin-tools==0.2
+
+# python-varnish is required for the varnish access
+# python-memcached is required for the memcache access
