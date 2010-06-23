@@ -142,10 +142,7 @@ def get_memcache_dash_modules():
             server_modules.append(MemcachedDashboardModule(server, stats))
         return server_modules
     except (ImportError, AttributeError), e:
-        if settings.DEBUG:
-            raise e
-        else:
-            return []
+        return []
 
 def get_varnish_dash_modules():
     """
@@ -170,10 +167,7 @@ def get_varnish_dash_modules():
             stats = manager.run('stats')[0][0]
             server_modules.append(VarnishDashboardModule(server, stats))
         except Exception,e:
-            if settings.DEBUG:
-                raise e
-            else:
-                continue
+            continue
     return server_modules
 
 def get_rss_dash_modules():
