@@ -1,6 +1,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
-from admin_tools.dashboard.models import *
+from admin_tools.dashboard import Dashboard
+from admin_tools.dashboard import modules
 from dashboardmods import get_memcache_dash_modules, get_rss_dash_modules, get_varnish_dash_modules
 
 
@@ -12,7 +13,7 @@ class CustomIndexDashboard(Dashboard):
         Dashboard.__init__(self, **kwargs)
 
         # append a link list module for "quick links"
-        self.children.append(LinkListDashboardModule(
+        self.children.append(modules.LinkList(
             title=_('Quick links'),
             layout='inline',
             draggable=False,
@@ -35,13 +36,13 @@ class CustomIndexDashboard(Dashboard):
         ))
 
         # append an app list module for "Applications"
-        self.children.append(AppListDashboardModule(
+        self.children.append(modules.AppList(
             title=_('Applications'),
             exclude_list=('django.contrib',),
         ))
 
         # append an app list module for "Administration"
-        self.children.append(AppListDashboardModule(
+        self.children.append(modules.AppList(
             title=_('Administration'),
             include_list=('django.contrib',),
         ))
