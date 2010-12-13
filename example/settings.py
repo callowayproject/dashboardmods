@@ -91,8 +91,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'dashboardmods',
 )
-ADMIN_TOOLS_INDEX_DASHBOARD = 'dashboard.CustomIndexDashboard'
+ADMIN_TOOLS_INDEX_DASHBOARD = 'example.dashboard.CustomIndexDashboard'
 ADMIN_TOOLS_MENU = 'example.menu.CustomMenu'
-#VARNISH_MANAGEMENT_ADDRS=('172.16.12.50:82',)
+VARNISH_MANAGEMENT_ADDRS=('localhost:82',)
 CACHE_BACKEND = "memcached://localhost:11211/"
-CACHE_BACKEND = "dummy:///"
