@@ -55,7 +55,10 @@ class MemcachedDashboardModule(DashboardModule):
         
         misses = int(stats['get_misses'])
         total_requests = int(stats['cmd_get'])
-        miss_pct = int((float(misses)/total_requests)*100)
+        if total_requests:
+            miss_pct = int((float(misses)/total_requests)*100)
+        else:
+            miss_pct = 0
         
         uptime = format_seconds(int(stats['uptime']))
         
