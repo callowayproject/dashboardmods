@@ -1,4 +1,4 @@
-from admin_tools.dashboard.models import DashboardModule
+from admin_tools.dashboard.modules import DashboardModule
 from django.conf import settings
 
 def format_bytes(bytes):
@@ -183,8 +183,8 @@ def get_rss_dash_modules():
     Note it says extend not append.
     """
     from models import RSSDashboardModule
-    from admin_tools.dashboard.models import FeedDashboardModule
+    from admin_tools.dashboard.modules import Feed
     modules = []
     for feed in RSSDashboardModule.objects.all():
-        modules.append(FeedDashboardModule(title=feed.title, feed_url=feed.feed, limit=feed.limit))
+        modules.append(Feed(title=feed.title, feed_url=feed.feed, limit=feed.limit))
     return modules
