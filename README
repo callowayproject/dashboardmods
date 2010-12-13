@@ -5,6 +5,12 @@ Dashboard Mods
 Dashboard Mods is a set of ``DashboardModule``\ s for 
 `django-admin-tools <http://pypi.python.org/pypi/django-admin-tools/>`_\ .
 
+Changes
+=======
+
+**0.2** Updated to support Django Admin Tools 0.4.0
+
+
 MemcacheDashboardModule
 =======================
 
