@@ -5,23 +5,23 @@
  * This plugin is not yet released, but should be when it will be finished.
  *
  * copyright (c) 2010 David Jean Louis <izimobil@gmail.com>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
 
@@ -38,7 +38,7 @@
                 columns: 2,
                 load_preferences_function: false,
                 save_preferences_function: false
-            }    
+            }
             var options = $.extend(defaults, options);
 
             return this.each(function() {
@@ -117,12 +117,17 @@
         var percent = Math.floor(100 / options.columns);
         var start = 0;
         var stop = 0;
-        for (i = 0; i < options.columns; i++) {
-            if (!sizes[i]) {
+        for (var i = 0; i < options.columns; i++) {
+            if (typeof(sizes[i]) == 'undefined') {
                 start = i * size;
                 stop  = start + size;
+            } else if (sizes[i] == 0) {
+                elt.append(
+                    '<div class="dashboard-column" style="float:left;width:'+percent+'%;"/>'
+                );
+                continue;
             } else {
-                start = (i == 0) ? 0 : sizes[i-1];
+                start = (i == 0) ? 0 : start + sizes[i-1];
                 stop  = start + sizes[i];
             }
             elts.slice(start, stop).wrapAll(
@@ -175,7 +180,7 @@
     };
 
     var _set_collapsible = function(elt, options) {
-        elt.find('.collapsible h2').each(function() {
+        elt.find('> .dashboard-column > .collapsible > h2').each(function() {
             $(this).append('<a href="#" class="toggle-icon">Toggle</a>').find('a.toggle-icon').click(function() {
                 var prnt = $(this).parent().parent();
                 _toggle_element(prnt, options, true);
@@ -192,7 +197,7 @@
     };
 
     var _set_deletable = function(elt, options) {
-        elt.find('.deletable h2').each(function() {
+        elt.find('> .dashboard-column > .deletable > h2').each(function() {
             $(this).append('<a href="#" class="close-icon">Close</a>').find('a.close-icon').click(function() {
                 var prnt = $(this).parent().parent();
                 _delete_element(prnt, options, true);
@@ -209,10 +214,10 @@
                 panel_ul = $('#' + options.panel_id).find('ul');
             }
             panel_ul.append(
-                '<li><a href="#" rel="' 
-                + elt.attr('id') 
+                '<li><a href="#" rel="'
+                + elt.attr('id')
                 + '" class="addlink dashboard-module-add">'
-                + elt.find('h2').contents().first().text() 
+                + elt.find('h2').contents().first().text()
                 + '</a></li>'
             );
             _set_addable(elt, options, $('#'+options.panel_id).find('li a[rel='+elt.attr('id')+']'));
@@ -236,7 +241,7 @@
     };
 
     var _add_element = function(elt, options, save_preference) {
-        panel_elt = $('#'+options.panel_id).find('li a[rel='+elt.attr('id')+']');
+        var panel_elt = $('#'+options.panel_id).find('li a[rel='+elt.attr('id')+']');
         panel_elt.parent().remove();
         elt.removeClass('disabled');
         elt.fadeIn('fast');
@@ -274,7 +279,7 @@
         }
     };
 
-    // quick hack to ensure that we do not save preferences if they are 
+    // quick hack to ensure that we do not save preferences if they are
     // not modified...
     var last_saved_preferences = null;
 
