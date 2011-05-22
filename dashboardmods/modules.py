@@ -96,9 +96,26 @@ class VarnishDashboardModule(DashboardModule):
         total_requests = stats['cache_hits'] + misses
         miss_pct = int((float(misses)/total_requests)*100)
         
-        bytes_used = format_bytes(stats['bytes_allocated'])
-        bytes_available = format_bytes(stats['bytes_free'])
-        storage_pct = int((float(stats['bytes_allocated'])/stats['bytes_free'])*100)
+        if haskey(stats, 'bytes_allocated'):
+            mem_used_key = 'bytes_allocated'
+            mem_free_key = 'bytes_free'
+        elif haskey(stats, 'sma_bytes_allocated'):
+            mem_used_key = 'sma_bytes_allocated'
+            mem_free_key = 'sma_bytes_free'
+        elif haskey(stats, 'sms_bytes_allocated'):
+            mem_used_key = 'sms_bytes_allocated'
+            mem_free_key = 'sms_bytes_free'
+        else:
+            mem_used_key = None
+        
+        if mem_used_key is not None:
+            bytes_used = format_bytes(stats[mem_used_key])
+            bytes_available = format_bytes(stats[mem_free_key])
+            storage_pct = int((float(stats[mem_used_key])/stats[mem_free_key])*100)
+        else:
+            bytes_used = 0
+            bytes_available = 0
+            storage_pct = 0
         
         storage = {
             'label': 'Memory Usage',
