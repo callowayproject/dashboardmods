@@ -186,8 +186,11 @@ def get_varnish_dash_modules():
             manager = VarnishManager((server,))
             stats = manager.run('stats')[0][0]
             server_modules.append(VarnishDashboardModule(server, stats))
-        except Exception,e:
-            continue
+        except Exception, e:
+            if settings.DEBUG:
+                raise e
+            else:
+                continue
     return server_modules
 
 def get_rss_dash_modules():
