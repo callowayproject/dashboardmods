@@ -1,0 +1,142 @@
+{% extends "admin_tools/dashboard/module.html" %}
+{% block module_content %}
+<!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="/static/jquery.js"></script>
+<script language="javascript" type="text/javascript" src="/static/jquery.flot.js"></script>
+<style type="text/css" media="screen">
+	.tooltip {
+		border: 1px solid #fdd;
+		padding: 3px;
+		background-color: #fff;
+		opacity: 0.8;
+		display: none;
+		font: 10px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+		border-radius: 2px;
+		position: absolute;
+	}
+	.tooltip .label { font-size: 75%; }
+	.tooltip .value { font-weight: bold; }
+</style>
+{{ module.children.0.html|safe }}
+<script id="source">
+(function($) {
+	$.extend( jQuery.fn, {
+		resizableFlot: function(flotID, renderFunc) {
+			var elm = this;
+			var childElm = $('<div id="'+flotID+'" style="width:'+elm.innerWidth()+'px;height:'+elm.innerHeight()+'px"></div>');
+			elm.html(childElm);
+			renderFunc(childElm);
+			$(window).resize(function() {
+				var oldWidth = childElm.width();
+				var oldHeight = childElm.height();
+				childElm.width(elm.innerWidth() + 'px');
+				childElm.height(elm.innerHeight() + 'px');
+				if (childElm.width() != oldWidth || childElm.height() != oldHeight) {
+					renderFunc(childElm);
+				}
+			});
+		}
+	});
+})(jQuery);
+$(function () {
+	var d = [[1288396800000, 6.62], [1288483200000, 5.51], [1288569600000, 7.45], [1288656000000, 6.81], [1288742400000, 5.04], [1288828800000, 5.77], [1288915200000, 8.88], [1289001600000, 8.67], [1289088000000, 8.35], [1289174400000, 7.67], [1289260800000, 5.95], [1289347200000, 7.96], [1289433600000, 7.56], [1289520000000, 6.86], [1289606400000, 5.51], [1289692800000, 5.8], [1289779200000, 7.02], [1289865600000, 6.54], [1289952000000, 6.14], [1290038400000, 4.95], [1290124800000, 7.18], [1290211200000, 9.12], [1290297600000, 8.35], [1290384000000, 7.44], [1290470400000, 5.59], [1290556800000, 4.19], [1290643200000, 4.9], [1290729600000, 5.17], [1290816000000, 5.66], [1290902400000, 6.05], [1290988800000, 2.83]];
+	var firstTime = true;
+	var previousPoint = [null, null];
+	var options = {
+		xaxis: { mode: "time" },
+		selection: { mode: "x" },
+		points: { show: true },
+		lines: {show: true},
+		grid: { hoverable: true, markings: weekendAreas }
+	};
+
+	function floatToTime(number){
+		var min = Math.floor(number);
+		var sec = Math.round((number - min) * 60);
+		sec = ("0" + sec).slice(-2);
+		return min + ":" + sec;
+	};
+	
+	function formatDate(thedate){
+		var day_names = new Array ( );
+		day_names[day_names.length] = "Sun";
+		day_names[day_names.length] = "Mon";
+		day_names[day_names.length] = "Tue";
+		day_names[day_names.length] = "Wed";
+		day_names[day_names.length] = "Thu";
+		day_names[day_names.length] = "Fri";
+		day_names[day_names.length] = "Sat";
+		var result = day_names[thedate.getDay()] + " " + thedate.getMonth();
+		result += "/" + thedate.getDate() + "/" + thedate.getFullYear();
+		return result;
+	};
+	
+	// helper for returning the weekends in a period
+	function weekendAreas(axes) {
+		var markings = [];
+		var d = new Date(axes.xaxis.min);
+		// go to the first Saturday
+		d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 1) % 7));
+		d.setUTCSeconds(0);
+		d.setUTCMinutes(0);
+		d.setUTCHours(0);
+		var i = d.getTime();
+		do {
+			// when we don't set yaxis, the rectangle automatically
+			// extends to infinity upwards and downwards
+			markings.push({ xaxis: { from: i, to: i + 2 * 24 * 60 * 60 * 1000 } });
+			i += 7 * 24 * 60 * 60 * 1000;
+		} while (i < axes.xaxis.max);
+
+		return markings;
+	};
+	
+	$('#{{ module.children.0.id }}').resizableFlot('{{ module.children.0.id }}-graph', renderGraph);
+	
+	function renderGraph(elm){
+		$.plot($(elm), [{data:d, label: 'minutes'}], options);
+		$('#{{ module.children.0.id }}-tooltip').fadeOut(200);
+		firstTime = true;
+		$("#{{ module.children.0.id }}-graph").bind("plothover", plotHover);
+	};
+	
+	function showTooltip(x, y, value, label) {
+		$('#{{ module.children.0.id }}-tooltip .label').html(label);
+		$('#{{ module.children.0.id }}-tooltip .value').html(value);
+		$('#{{ module.children.0.id }}-tooltip').animate( {
+			top: y + 5,
+			left: x + 5,
+			opacity: 0.8
+		}, 200);
+		if (firstTime){
+			$('#{{ module.children.0.id }}-tooltip').fadeIn(200);
+			firstTime = false;
+		}
+	};
+
+	$("#{{ module.children.0.id }}-graph").bind("plothover", plotHover);
+
+	function plotHover(event, pos, item) {
+		$("#x").text(pos.x.toFixed(2));
+		$("#y").text(pos.y.toFixed(2));
+
+		if (item) {
+			if ((previousPoint[0] != item.datapoint[0]) || 
+				(previousPoint[1] != item.datapoint[1])){
+				previousPoint = item.datapoint;
+				var x = new Date(item.datapoint[0]),
+					y = item.datapoint[1].toFixed(2);
+				var value = floatToTime(y);
+				showTooltip(item.pageX, item.pageY,
+							value + " " + item.series.label, formatDate(x));
+			}
+		} else {
+			if ((previousPoint[0] != null) || (previousPoint[1] != null)) {
+				previousPoint = [null, null];
+			}
+		}
+	};
+});
+</script>
+
+{% endblock %}

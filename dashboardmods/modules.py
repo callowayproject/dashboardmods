@@ -137,6 +137,21 @@ class VarnishDashboardModule(DashboardModule):
         self.template = "dashboard/modules/memcache.html"
 
 
+class GraphDashboardModule(DashboardModule):
+    """
+    A dashboard module that can display a javascript graph
+    """
+    def __init__(self, graph_id, *args, **kwargs):
+        super(GraphDashboardModule, self).__init__(*args, **kwargs)
+        html = (
+            '<div id="%s" style="width:100%%;height:300px;"></div>' % graph_id,
+            '<div id="%s-tooltip" class="tooltip"><span class="label"></span><br>' % graph_id,
+            '<span class="value"></span></div>'
+        )
+        self.template = "dashboard/modules/graph.html"
+        self.children.append({'html': "".join(html), 'id':graph_id})
+
+
 def get_memcache_dash_modules():
     """
     Based on the settings in Django, attempt to create a MemcacheDashboardModule
