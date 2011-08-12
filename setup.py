@@ -19,6 +19,11 @@ setup(
     long_description = read_file('README'),
     packages = find_packages(),
     include_package_data = True,
+    package_data={'dashboardmods': [
+        'templates/*.html',
+        'templates/*/*.html',
+        'templates/*/*/*.html',
+        ]},
     classifiers = [
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
