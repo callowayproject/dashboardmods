@@ -188,7 +188,7 @@ def get_varnish_dash_modules():
             server_modules.append(VarnishDashboardModule(server, stats))
         except Exception, e:
             if settings.DEBUG:
-                raise e
+                raise
             else:
                 continue
     return server_modules
