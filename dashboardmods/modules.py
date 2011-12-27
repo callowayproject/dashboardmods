@@ -91,18 +91,18 @@ class VarnishDashboardModule(DashboardModule):
         super(VarnishDashboardModule, self).__init__(*args, **kwargs)
         
         self.title = "Varnish Stats (%s)" % server.split(":")[0]
-        
-        misses = stats['cache_misses']
-        total_requests = stats['cache_hits'] + misses
-        miss_pct = int((float(misses)/total_requests)*100)
-        
-        if haskey(stats, 'bytes_allocated'):
+
+        misses = stats.get('cache_misses', 0)
+        total_requests = stats.get('cache_hits', 0) + misses
+        miss_pct = int((float(misses)/total_requests)*100) if total_requests else 0
+
+        if 'bytes_allocated' in stats:
             mem_used_key = 'bytes_allocated'
             mem_free_key = 'bytes_free'
-        elif haskey(stats, 'sma_bytes_allocated'):
+        elif 'sma_bytes_allocated' in stats:
             mem_used_key = 'sma_bytes_allocated'
             mem_free_key = 'sma_bytes_free'
-        elif haskey(stats, 'sms_bytes_allocated'):
+        elif 'sms_bytes_allocated' in stats:
             mem_used_key = 'sms_bytes_allocated'
             mem_free_key = 'sms_bytes_free'
         else:
@@ -188,7 +188,7 @@ def get_varnish_dash_modules():
             server_modules.append(VarnishDashboardModule(server, stats))
         except Exception, e:
             if settings.DEBUG:
-                raise e
+                raise
             else:
                 continue
     return server_modules
