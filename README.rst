@@ -10,6 +10,26 @@ Changes
 
 **0.2** Updated to support Django Admin Tools 0.4.0
 
+Installation
+============
+
+Using PIP::
+
+	pip install dashboardmods
+	
+or download the app `here <http://pypi.python.org/pypi/dashboardmods/>`_ ::
+
+	python setup.py install
+
+
+Add **dashboardmods** to your settings **INSTALLED_APPS**::
+
+    INSTALLED_APPS = (
+        ...
+        'dashboardmods',
+        ...
+    )
+
 
 MemcacheDashboardModule
 =======================
